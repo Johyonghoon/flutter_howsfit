@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_howsfit/screens/get_viton_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,7 +13,6 @@ class ImageUploader extends StatefulWidget {
 }
 
 class _ImageUploaderState extends State<ImageUploader> {
-  List<File> _images = [];
   File? _model;
   File? _cloth;
 
@@ -58,6 +58,9 @@ class _ImageUploaderState extends State<ImageUploader> {
 
     if (response.statusCode == 200) {
       print("Image Upload");
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (BuildContext context) => GetVitonImage())
+      );
 
     } else {
       print("Image Upload failed");
