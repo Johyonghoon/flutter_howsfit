@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   image_picker: ^0.8.6+4
   dio: ^5.0.2
+  path_provider: ^2.0.13
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/cloth/
+    - assets/model/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class GetVitonImage extends StatefulWidget {
 
@@ -13,8 +15,35 @@ class GetVitonImage extends StatefulWidget {
 }
 
 class _GetVitonImageState extends State<GetVitonImage> {
+  File? _viton;
 
-  
+  void initState() {
+    super.initState();
+    getVitonImage();
+  }
+
+  Future getVitonImage() async {
+    // test
+    final response2 = await http.get(
+        Uri.parse('http://127.0.0.1:8000/viton'),
+    );
+
+    if (response2.statusCode == 201) {
+      print('Get VITON Image successfully');
+      final Map<String, dynamic> data = json.decode(response2.body);
+      final String imageBase64 = data['image'];
+
+      final decodedImage = base64.decode(imageBase64);
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/received_image.jpg';
+      final imageFile = File(filePath);
+      await imageFile.writeAsBytes(decodedImage);
+      _viton = imageFile;
+    } else {
+      print('Failed to upload image ${response2.statusCode}');
+    }
+  }
+
 
   void onButtonPressed() {
     Navigator.of(context).pop();
@@ -22,6 +51,8 @@ class _GetVitonImageState extends State<GetVitonImage> {
 
   @override
   Widget build(BuildContext context) {
+    final _imageSize = MediaQuery.of(context).size.width / 2;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("가상 시착"),
@@ -30,6 +61,32 @@ class _GetVitonImageState extends State<GetVitonImage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (_viton == null)
+              Container(
+                constraints: BoxConstraints(
+                  maxHeight: _imageSize,
+                  minWidth: _imageSize,
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.image_outlined,
+                    size: _imageSize,
+                  ),
+                ),
+              )
+            else
+              Container(
+                width: _imageSize,
+                height: _imageSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  border: Border.all(
+                      width: 2, color: Theme.of(context).colorScheme.primary),
+                  image: DecorationImage(
+                      image: FileImage(_viton!),
+                      fit: BoxFit.cover),
+                ),
+              ),
             SizedBox(
               height: 20.0,
             ),
