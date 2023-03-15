@@ -28,17 +28,23 @@ class _GetVitonImageState extends State<GetVitonImage> {
         Uri.parse('http://127.0.0.1:8000/viton'),
     );
 
-    if (response2.statusCode == 201) {
+    if (response2.statusCode == 200) {
       print('Get VITON Image successfully');
       final Map<String, dynamic> data = json.decode(response2.body);
       final String imageBase64 = data['image'];
+      final viton_fname = data['fname'];
 
       final decodedImage = base64.decode(imageBase64);
       final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/received_image.jpg';
+      final filePath = '${directory.path}/${viton_fname}';
+      print(filePath);
       final imageFile = File(filePath);
       await imageFile.writeAsBytes(decodedImage);
-      _viton = imageFile;
+
+      setState(() {
+        _viton = imageFile;
+      });
+
     } else {
       print('Failed to upload image ${response2.statusCode}');
     }
@@ -52,6 +58,8 @@ class _GetVitonImageState extends State<GetVitonImage> {
   @override
   Widget build(BuildContext context) {
     final _imageSize = MediaQuery.of(context).size.width / 2;
+    dynamic _imageHeight = 409.6;
+    dynamic _imageWidth = 307.2;
 
     return Scaffold(
       appBar: AppBar(
@@ -64,8 +72,8 @@ class _GetVitonImageState extends State<GetVitonImage> {
             if (_viton == null)
               Container(
                 constraints: BoxConstraints(
-                  maxHeight: _imageSize,
-                  minWidth: _imageSize,
+                  maxHeight: _imageHeight,
+                  minWidth: _imageWidth,
                 ),
                 child: Center(
                   child: Icon(
@@ -76,8 +84,8 @@ class _GetVitonImageState extends State<GetVitonImage> {
               )
             else
               Container(
-                width: _imageSize,
-                height: _imageSize,
+                height: _imageHeight,
+                width: _imageWidth,
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   border: Border.all(

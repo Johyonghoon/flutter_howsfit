@@ -40,28 +40,22 @@ class _ImageUploaderState extends State<ImageUploader> {
       Uri.parse('http://127.0.0.1:8000/upload'),
     );
 
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'model',
-        modelFile.path,
-      )
-    );
+    request.files.add(await http.MultipartFile.fromPath(
+      'model',
+      modelFile.path,
+    ));
 
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'cloth',
-        clothFile.path,
-      )
-    );
+    request.files.add(await http.MultipartFile.fromPath(
+      'cloth',
+      clothFile.path,
+    ));
 
     var response = await request.send();
 
     if (response.statusCode == 200) {
       print("Image Upload");
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (BuildContext context) => GetVitonImage())
-      );
-
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) => GetVitonImage()));
     } else {
       print("Image Upload failed");
     }
@@ -71,6 +65,8 @@ class _ImageUploaderState extends State<ImageUploader> {
   @override
   Widget build(BuildContext context) {
     final _imageSize = MediaQuery.of(context).size.width / 2;
+    dynamic _imageHeight = 204.8;
+    dynamic _imageWidth = 153.6;
 
     return Scaffold(
       appBar: AppBar(
@@ -80,72 +76,86 @@ class _ImageUploaderState extends State<ImageUploader> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            if (_model == null)
-              Container(
-                constraints: BoxConstraints(
-                  maxHeight: _imageSize,
-                  minWidth: _imageSize,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    if (_model == null)
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: _imageHeight,
+                          minWidth: _imageWidth,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.image_outlined,
+                            size: _imageSize,
+                          ),
+                        ),
+                      )
+                    else
+                      Container(
+                        height: _imageHeight,
+                        width: _imageWidth,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          border: Border.all(
+                              width: 2,
+                              color: Theme.of(context).colorScheme.primary),
+                          image: DecorationImage(
+                              image: FileImage(File(_model!.path)),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    ElevatedButton(
+                      onPressed: getModel,
+                      child: Text("Selected Fitting shot"),
+                    ),
+                  ],
                 ),
-                child: Center(
-                  child: Icon(
-                    Icons.image_outlined,
-                    size: _imageSize,
-                  ),
+                Column(
+                  children: [
+                    if (_cloth == null)
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: _imageHeight,
+                          minWidth: _imageWidth,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.image_outlined,
+                            size: _imageSize,
+                          ),
+                        ),
+                      )
+                    else
+                      Container(
+                        height: _imageHeight,
+                        width: _imageWidth,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          border: Border.all(
+                              width: 2,
+                              color: Theme.of(context).colorScheme.primary),
+                          image: DecorationImage(
+                              image: FileImage(File(_cloth!.path)),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    ElevatedButton(
+                      onPressed: getCloth,
+                      child: Text("Selected Cloth"),
+                    ),
+                  ],
                 ),
-              )
-            else
-              Container(
-                width: _imageSize,
-                height: _imageSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  border: Border.all(
-                    width: 2, color: Theme.of(context).colorScheme.primary),
-                  image: DecorationImage(
-                    image: FileImage(File(_model!.path)),
-                    fit: BoxFit.cover),
-                  ),
-                ),
-            SizedBox(
-              height: 20.0,
-            ),
-            ElevatedButton(
-              onPressed: getModel,
-              child: Text("Selected Fitting shot"),
-            ),
-            if (_cloth == null)
-              Container(
-                constraints: BoxConstraints(
-                  maxHeight: _imageSize,
-                  minWidth: _imageSize,
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.image_outlined,
-                    size: _imageSize,
-                  ),
-                ),
-              )
-            else
-              Container(
-                width: _imageSize,
-                height: _imageSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  border: Border.all(
-                      width: 2, color: Theme.of(context).colorScheme.primary),
-                  image: DecorationImage(
-                      image: FileImage(File(_cloth!.path)),
-                      fit: BoxFit.cover),
-                ),
-              ),
-            SizedBox(
-              height: 20.0,
-            ),
-            ElevatedButton(
-              onPressed: getCloth,
-              child: Text("Selected Cloth"),
+              ],
             ),
             SizedBox(
               height: 20.0,
